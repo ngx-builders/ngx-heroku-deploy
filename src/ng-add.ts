@@ -75,7 +75,7 @@ export const ngAdd = (options: NgAddOptions) => (
   }
 
   project.architect['deploy'] = {
-    builder: '@angular-schule/ngx-deploy-starter:deploy',
+    builder: 'ngx-heroku-deploy:deploy',
     options: {}
   };
 

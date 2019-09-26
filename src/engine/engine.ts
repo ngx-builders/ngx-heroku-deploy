@@ -2,21 +2,26 @@ import { logging } from '@angular-devkit/core';
 import * as fse from 'fs-extra';
 
 import { Schema } from '../deploy/schema';
+const Heroku = require('heroku-client');
 
 // TODO: add your deployment code here!
 export async function run(dir: string, options: Schema, logger: logging.LoggerApi) {
 
   try {
 
-    options.targetDir = options.targetDir || '/example-folder';
+    const heroku = new Heroku({ token: '' });
 
-    if (!await fse.pathExists(options.targetDir)) {
-      throw new Error(`Target directory ${ options.targetDir } does not exist!`);
-    }
+    const result = await heroku.get('/apps');
+    const site = result.find((app => app.name === 'ngx-deploy-demo'))
 
-    await fse.copy(dir, options.targetDir)
-
-    logger.info('🚀 Successfully published via @angular-schule/ngx-deploy-starter! Have a nice day!');
+    const slugResult = await heroku.post(`/apps/${site.name}/slugs`,{
+        body: {
+          process_types: { "web": "node-v0.10.20-linux-x64/bin/node index.js" }
+        }
+      }
+    );
+    // console.log(site);
+    console.log(slugResult.blob.url);
   }
   catch (error) {
     logger.error('❌ An error occurred!');
