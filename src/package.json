@@ -54,7 +54,8 @@
   },
   "dependencies": {
     "fs-extra": "^8.1.0",
-    "heroku-client": "^3.0.7"
+    "heroku-client": "^3.0.7",
+    "node-fetch": "^2.6.0"
   },
   "jest": {
     "transform": {
