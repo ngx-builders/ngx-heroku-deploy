@@ -51,7 +51,8 @@ export default createBuilder<any>(
       await deploy(
         engine,
         context,
-        path.join(workspaceRoot, targets.build.options.outputPath),
+        path.join(workspaceRoot),
+        targets.build.options.outputPath,
         options
       );
     } catch (e) {

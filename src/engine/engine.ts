@@ -6,7 +6,10 @@ import * as tar from 'tar';
 const fetch = require("node-fetch");
 
 // TODO: add your deployment code here!
-export async function run(dir: string, options: Schema, logger: logging.LoggerApi) {
+export async function run(dir: string,
+  options: Schema,
+  outDir: string,
+  logger: logging.LoggerApi) {
 
   try {
 
@@ -17,8 +20,8 @@ export async function run(dir: string, options: Schema, logger: logging.LoggerAp
 
     const slugResult = await heroku.post(`/apps/${site.name}/slugs`, {
       body: {
-        process_types: { "web": "node-v0.10.20-linux-x64/bin/node index.js" },
-        buildpack_provided_description: "heroku/nodejs"
+        buildpack_provided_description: "heroku/nodejs",
+        process_types: { "web": `node-v0.10.20-linux-x64/bin/node index.js` }
       }
     }
     );
@@ -27,12 +30,13 @@ export async function run(dir: string, options: Schema, logger: logging.LoggerAp
     // console.log(site);
     console.log(slugResult);
 
+    console.log(`${outDir} outdir`);
     const tarResponse = await tar.c(
       {
         gzip: true,
-        file: `${dir}.tgz`
+        file: 'slug.tgz'
       },
-      [dir]
+      [outDir]
     );
 
     console.log(`${tarResponse} response`);
@@ -40,9 +44,9 @@ export async function run(dir: string, options: Schema, logger: logging.LoggerAp
     const response = await fetch(slugResult.blob.url, {
       method: `${slugResult.blob.method}`, // or 'PUT'
       // body: JSON.stringify(data), // data can be `string` or {object}!
-      body: `@${dir}.tgz`,
+      body: `@${dir}/slug.tgz`,
       headers: {
-        'Content-Type': ``
+        'Content-Type': ''
       }
     });
     console.log(response);
