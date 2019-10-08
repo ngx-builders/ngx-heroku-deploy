@@ -4,7 +4,7 @@ import { Schema } from '../deploy/schema';
 const Heroku = require('heroku-client');
 import * as tar from 'tar';
 const fetch = require("node-fetch");
-
+import { ensureDir, copy, remove } from 'fs-extra';
 // TODO: add your deployment code here!
 export async function run(dir: string,
   options: Schema,
@@ -29,6 +29,13 @@ export async function run(dir: string,
     // const upload
     // console.log(site);
     console.log(slugResult);
+    // !fs.existsSync(`${dir}/app`) && fs.mkdirSync(`${dir}/app`);
+
+    await remove(`${dir}/app`);
+    await remove(`${dir}/slug.tgz`);
+    await ensureDir(`${dir}/app`);
+    await copy(`${outDir}`, `${dir}/app`);
+    // await copy(`${dir}/index.js`, `${dir}/app`);
 
     console.log(`${outDir} outdir`);
     const tarResponse = await tar.c(
@@ -36,13 +43,13 @@ export async function run(dir: string,
         gzip: true,
         file: 'slug.tgz'
       },
-      [outDir]
+      ['app']
     );
 
     console.log(`${tarResponse} response`);
 
     const response = await fetch(slugResult.blob.url, {
-      method: `${slugResult.blob.method}`, // or 'PUT'
+      method: 'PUT', // or 'PUT'
       // body: JSON.stringify(data), // data can be `string` or {object}!
       body: `@${dir}/slug.tgz`,
       headers: {
