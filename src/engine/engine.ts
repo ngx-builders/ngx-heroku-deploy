@@ -1,12 +1,19 @@
 import { logging } from '@angular-devkit/core';
-
 import { Schema } from '../deploy/schema';
 const Heroku = require('heroku-client');
-var url = require('url');
+import * as tar from 'tar';
 const fetch = require("node-fetch");
+import {
+  ensureDir, copy, remove, move,
+  copyFileSync, readFileSync, createWriteStream
+} from 'fs-extra';
+
 
 // TODO: add your deployment code here!
-export async function run(dir: string, options: Schema, logger: logging.LoggerApi) {
+export async function run(dir: string,
+  options: Schema,
+  outDir: string,
+  logger: logging.LoggerApi) {
 
   try {
 
@@ -17,28 +24,42 @@ export async function run(dir: string, options: Schema, logger: logging.LoggerAp
 
     const slugResult = await heroku.post(`/apps/${site.name}/slugs`, {
       body: {
-        process_types: { "web": "node-v0.10.20-linux-x64/bin/node index.js" }
-      }
-    }
-    );
-
-    // const upload
-    // console.log(site);
-    console.log(slugResult);
-    const apiUrl = slugResult.blob.url.replace('%3D', '=');
-    console.log(apiUrl);
-
-
-    const response = await fetch(slugResult.blob.url, {
-      method: `${slugResult.blob.method}`, // or 'PUT'
-      // body: JSON.stringify(data), // data can be `string` or {object}!
-      body: '@E:\ngx-deploy-heroku\ngx-deploy-sample\ngx-deploy-sample-0.0.0.tgz',
-      headers: {
-        'Content-Type': ''
+        buildpack_provided_description: "heroku/nodejs",
+        process_types: { "web": `node-v10.16.3-linux-x64/bin/node index.js` }
       }
     });
-    console.log(response);
-    console.log(slugResult.id);
+    logger.info('Copying Build Files');
+    await remove(`${dir}/app`);
+    await remove(`${dir}/tmp`);
+    await remove(`${dir}/slug.tgz`);
+    await ensureDir(`${dir}/app`);
+    await ensureDir(`${dir}/tmp`);
+
+    await download();
+    await copy(`${outDir}`, `${dir}/app`);
+    await moveNodeJS('node-v10.16.3-linux-x64', `${dir}/app/node-v10.16.3-linux-x64`)
+    copyFileSync('index.js', `${dir}/app/index.js`);
+
+    const tarResponse = await tar.c(
+      {
+        gzip: true,
+        file: 'slug.tgz'
+      },
+      ['./app']
+    );
+
+
+    const buf = readFileSync(`slug.tgz`);
+    const response = await fetch(slugResult.blob.url, {
+      method: 'PUT', // or 'PUT'
+      // body: JSON.stringify(data), // data can be `string` or {object}!
+      body: buf,
+      headers: {
+        "Content-Type": ""
+      }
+    })
+
+    logger.info('Starting deployment');
 
     const release = await heroku.post(`/apps/${site.name}/releases`, {
       body: {
@@ -46,11 +67,40 @@ export async function run(dir: string, options: Schema, logger: logging.LoggerAp
       }
     });
 
-    console.log(release);
-
+    logger.info('Deployment Success!');
+    await remove(`${dir}/app`);
+    await remove(`${dir}/tmp`);
+    await remove(`${dir}/slug.tgz`);
   }
   catch (error) {
     logger.error('❌ An error occurred!');
     throw error;
   }
 };
+
+
+async function download() {
+  const res = await fetch('https://nodejs.org/dist/v10.16.3/node-v10.16.3-linux-x64.tar.gz');
+  await new Promise((resolve, reject) => {
+    const fileStream = createWriteStream('./tmp/node-v10.16.3.tar.gz');
+    res.body.pipe(fileStream);
+    res.body.on("error", (err) => {
+      reject(err);
+    });
+    fileStream.on("finish", function () {
+      tar.x({
+        file: './tmp/node-v10.16.3.tar.gz'
+      })
+      resolve();
+    });
+  });
+}
+
+async function moveNodeJS(src, dest) {
+  try {
+    await move(src, dest)
+    console.log('success!')
+  } catch (err) {
+    console.error(err)
+  }
+}
