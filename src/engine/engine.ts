@@ -22,13 +22,6 @@ export async function run(dir: string,
     const result = await heroku.get('/apps');
     const site = result.find((app => app.name === 'ngx-deploy-demo'))
 
-    // async function download() {
-    //   const response = await fetch('https://nodejs.org/dist/v10.16.3/node-v10.16.3.tar.gz')
-    //   if (!response.ok) throw new Error(`unexpected response ${response .statusText}`)
-    //   await streamPipeline(response.body, fs.createWriteStream('./app'))
-    // }
-    // download()
-
     const slugResult = await heroku.post(`/apps/${site.name}/slugs`, {
       body: {
         buildpack_provided_description: "heroku/nodejs",
@@ -41,22 +34,12 @@ export async function run(dir: string,
     await remove(`${dir}/slug.tgz`);
     await ensureDir(`${dir}/app`);
     await ensureDir(`${dir}/tmp`);
-    // fetch('https://nodejs.org/dist/v10.16.3/node-v10.16.3.tar.gz')
-    //   .then(res => {
-    //     const dest = fs.createWriteStream('./tmp/node-v10.16.3.tar.gz');
-    //     res.body.pipe(dest);
-    //   });
+
     await download();
     await copy(`${outDir}`, `${dir}/app`);
     await moveNodeJS('node-v10.16.3-linux-x64', `${dir}/app/node-v10.16.3-linux-x64`)
     copyFileSync('index.js', `${dir}/app/index.js`);
 
-    // copyfiles([`${dir}/index.js`, `${dir}/app`], () => {
-    //   console.log('Files copied');
-    // });
-
-
-    console.log(`${outDir} outdir`);
     const tarResponse = await tar.c(
       {
         gzip: true,
