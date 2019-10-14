@@ -25,7 +25,7 @@ export async function run(dir: string,
     const slugResult = await heroku.post(`/apps/${site.name}/slugs`, {
       body: {
         buildpack_provided_description: "heroku/nodejs",
-        process_types: { "web": `node-v10.16.3-linux-x64/bin/node index.js` }
+        process_types: { "web": `node-v12.12.0-linux-x64/bin/node index.js` }
       }
     });
     logger.info('Copying Build Files');
@@ -37,7 +37,7 @@ export async function run(dir: string,
 
     await download();
     await copy(`${outDir}`, `${dir}/app`);
-    await moveNodeJS('node-v10.16.3-linux-x64', `${dir}/app/node-v10.16.3-linux-x64`)
+    await moveNodeJS('node-v12.12.0-linux-x64', `${dir}/app/node-v12.12.0-linux-x64`)
     copyFileSync('index.js', `${dir}/app/index.js`);
 
     const tarResponse = await tar.c(
@@ -68,9 +68,9 @@ export async function run(dir: string,
     });
 
     logger.info('Deployment Success!');
-    await remove(`${dir}/app`);
-    await remove(`${dir}/tmp`);
-    await remove(`${dir}/slug.tgz`);
+    // await remove(`${dir}/app`);
+    // await remove(`${dir}/tmp`);
+    // await remove(`${dir}/slug.tgz`);
   }
   catch (error) {
     logger.error('❌ An error occurred!');
@@ -80,16 +80,16 @@ export async function run(dir: string,
 
 
 async function download() {
-  const res = await fetch('https://nodejs.org/dist/v10.16.3/node-v10.16.3-linux-x64.tar.gz');
+  const res = await fetch('http://nodejs.org/dist/latest-v12.x/node-v12.12.0-linux-x64.tar.gz');
   await new Promise((resolve, reject) => {
-    const fileStream = createWriteStream('./tmp/node-v10.16.3.tar.gz');
+    const fileStream = createWriteStream('./tmp/node-v12.12.0-linux-x64.tar.gz');
     res.body.pipe(fileStream);
     res.body.on("error", (err) => {
       reject(err);
     });
     fileStream.on("finish", function () {
       tar.x({
-        file: './tmp/node-v10.16.3.tar.gz'
+        file: './tmp/node-v12.12.0-linux-x64.tar.gz'
       })
       resolve();
     });
