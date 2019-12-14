@@ -17,7 +17,10 @@ export async function run(dir: string,
 
   try {
 
-    const heroku = new Heroku({ token: '' });
+    const herokuToken = process.env.HEROKU_TOKEN;
+    if(!herokuToken) throw new Error('HEROKU_TOKEN not found in your environment!!');
+
+    const heroku = new Heroku({ token: herokuToken });
 
     const result = await heroku.get('/apps');
     const site = result.find((app => app.name === 'ngx-deploy-demo'))
