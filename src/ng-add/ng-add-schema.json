@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "angular-cli-ghpages-ng-add-schematic",
+  "title": "angular-cli-ghpages ng-add schematic",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "The name of the project."
+    },
+    "appName": {
+      "type": "string",
+      "description": "You can find the app Name on Heroku",
+      "x-prompt": "Application Name of Heroku (required)"
+    },
+    "herokuApiToken": {
+      "type": "string",
+      "description": "You can create a new API for free !",
+      "x-prompt": "Personal Access Tokens of Heroku Application (required)"
+    }
+  },
+  "required": ["appName","herokuApiToken"],
+  "additionalProperties": false
+}

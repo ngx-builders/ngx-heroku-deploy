@@ -4,13 +4,12 @@ import { NodeJsSyncHost } from '@angular-devkit/core/node';
 import os from 'os';
 import * as path from 'path';
 
-import * as engine from '../engine/engine';
 import deploy from './actions';
 import { Schema } from './schema';
 
 // Call the createBuilder() function to create a builder. This mirrors
 // createJobHandler() but add typings specific to Architect Builders.
-export default createBuilder<any>(
+export default createBuilder(
   async (
     options: Schema,
     context: BuilderContext
@@ -48,8 +47,7 @@ export default createBuilder<any>(
     // const workspaceRoot =  workspace.root;
 
     try {
-      await deploy(
-        engine,
+      return await deploy(
         context,
         path.join(workspaceRoot),
         targets.build.options.outputPath,
@@ -60,7 +58,5 @@ export default createBuilder<any>(
       console.error(e);
       return { success: false };
     }
-
-    return { success: true };
   }
 );

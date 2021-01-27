@@ -1,44 +1,57 @@
+import { BuilderOutput } from '@angular-devkit/architect';
 import { logging } from '@angular-devkit/core';
+import {
+  copy,
+  copyFileSync, ensureDir, move,
+  readFileSync, remove
+} from 'fs-extra';
+import * as tar from 'tar';
 import { Schema } from '../deploy/schema';
 const Heroku = require('heroku-client');
-import * as tar from 'tar';
 const fetch = require("node-fetch");
-import {
-  ensureDir, copy, remove, move,
-  copyFileSync, readFileSync, createWriteStream
-} from 'fs-extra';
 
+const path = require("path");
 
 // TODO: add your deployment code here!
 export async function run(dir: string,
   options: Schema,
   outDir: string,
-  logger: logging.LoggerApi) {
+  logger: logging.LoggerApi): Promise<BuilderOutput> {
 
   try {
-
-    const heroku = new Heroku({ token: '' });
-
+    const heroku = new Heroku({ token: options.herokuApiToken });
     const result = await heroku.get('/apps');
-    const site = result.find((app => app.name === 'ngx-deploy-demo'))
+    let site: any = null;
+    if (result && result.length > 0) {
+      site = result.find((app => app.name === options.appName));
+    }
+
+    if (!site) {
+      logger.error(`🚨 ${options.appName} application not found in Heroku!`);
+      return { success: false };
+    }
 
     const slugResult = await heroku.post(`/apps/${site.name}/slugs`, {
       body: {
         buildpack_provided_description: "heroku/nodejs",
-        process_types: { "web": `node-v12.12.0-linux-x64/bin/node index.js` }
+        process_types: { "web": `node-v15.6.0-linux-x64/bin/node server.js` }
       }
     });
+
     logger.info('Copying Build Files');
     await remove(`${dir}/app`);
     await remove(`${dir}/tmp`);
     await remove(`${dir}/slug.tgz`);
     await ensureDir(`${dir}/app`);
     await ensureDir(`${dir}/tmp`);
-
-    await download();
+    
     await copy(`${outDir}`, `${dir}/app`);
-    await moveNodeJS('node-v12.12.0-linux-x64', `${dir}/app/node-v12.12.0-linux-x64`)
-    copyFileSync('index.js', `${dir}/app/index.js`);
+    await tar.x({
+      file: path.join(__dirname, "../", 'node-v15.6.0-linux-x64.tar')
+    })
+    await moveNodeJS('node-v15.6.0-linux-x64', `${dir}/app/node-v15.6.0-linux-x64`)
+    copyFileSync(path.join(__dirname, "../", 'server.js'), `${dir}/app/server.js`);
+    copyFileSync(path.join(__dirname, "../", 'Procfile'), `${dir}/app/Procfile`);
 
     const tarResponse = await tar.c(
       {
@@ -68,6 +81,7 @@ export async function run(dir: string,
     });
 
     logger.info('Deployment Success!');
+    return { success: true };
     // await remove(`${dir}/app`);
     // await remove(`${dir}/tmp`);
     // await remove(`${dir}/slug.tgz`);
@@ -78,23 +92,6 @@ export async function run(dir: string,
   }
 };
 
-
-async function download() {
-  const res = await fetch('http://nodejs.org/dist/latest-v12.x/node-v12.12.0-linux-x64.tar.gz');
-  await new Promise((resolve, reject) => {
-    const fileStream = createWriteStream('./tmp/node-v12.12.0-linux-x64.tar.gz');
-    res.body.pipe(fileStream);
-    res.body.on("error", (err) => {
-      reject(err);
-    });
-    fileStream.on("finish", function () {
-      tar.x({
-        file: './tmp/node-v12.12.0-linux-x64.tar.gz'
-      })
-      resolve();
-    });
-  });
-}
 
 async function moveNodeJS(src, dest) {
   try {
