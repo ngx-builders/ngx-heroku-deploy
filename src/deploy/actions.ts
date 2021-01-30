@@ -1,17 +1,17 @@
 import { BuilderContext } from '@angular-devkit/architect';
 import { json, logging } from '@angular-devkit/core';
-
+import * as engine from '../engine/engine';
 import { Schema } from './schema';
 
 
+
 export default async function deploy(
-  engine: { run: (dir: string, options: Schema, outDir: string, logger: logging.LoggerApi) => Promise<void> },
   context: BuilderContext,
   projectRoot: string,
   outDir: string,
   options: Schema
 ) {
-
+  
   if (options.noBuild) {
     context.logger.info(`📦 Skipping build`);
   } else {
@@ -36,7 +36,16 @@ export default async function deploy(
     await build.result;
   }
 
-  await engine.run(
+  if (!options.herokuApiToken) {
+    context.logger.error("🚨 Heroku API Token not found!");
+    return { success: false };
+  }
+  if (!options.appName) {
+    context.logger.error("🚨 Please specify Heroku Application in which you want to deploy!");
+    return { success: false };
+  }
+
+  return await engine.run(
     projectRoot,
     options,
     outDir,

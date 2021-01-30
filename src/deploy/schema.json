@@ -21,6 +21,14 @@
     "targetDir": {
       "type": "string",
       "description": "This is one of the options you can freely choose according to your needs. --- We will 'deploy' to this folder."
+    },
+    "appName": {
+      "type": "string",
+      "description": "Application Name in which you want to deploy"
+    },
+    "herokuApiToken": {
+      "type": "string",
+      "description": "Heroku API Token for deploying the application"
     }
   }
 }

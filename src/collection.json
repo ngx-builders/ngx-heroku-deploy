@@ -3,8 +3,8 @@
   "schematics": {
     "ng-add": {
       "description": "Add @angular-schule/ngx-deploy-starter deploy schematic",
-      "factory": "./ng-add#ngAdd",
-      "schema": "./ng-add-schema.json",
+      "factory": "./ng-add/ng-add#ngAdd",
+      "schema": "./ng-add/ng-add-schema.json",
       "aliases": ["install"]
     }
   }
