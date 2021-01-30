@@ -22,6 +22,7 @@ export async function run(dir: string,
     const heroku = new Heroku({ token: options.herokuApiToken });
     const result = await heroku.get('/apps');
     let site: any = null;
+    const nodeVersion: string = 'node-v14.0.0-linux-x64';
     if (result && result.length > 0) {
       site = result.find((app => app.name === options.appName));
     }
@@ -34,7 +35,7 @@ export async function run(dir: string,
     const slugResult = await heroku.post(`/apps/${site.name}/slugs`, {
       body: {
         buildpack_provided_description: "heroku/nodejs",
-        process_types: { "web": `node-v15.6.0-linux-x64/bin/node server.js` }
+        process_types: { "web": `${nodeVersion}/bin/node server.js` }
       }
     });
 
@@ -47,9 +48,9 @@ export async function run(dir: string,
     
     await copy(`${outDir}`, `${dir}/app`);
     await tar.x({
-      file: path.join(__dirname, "../", 'node-v15.6.0-linux-x64.tar')
+      file: path.join(__dirname, "../", `${nodeVersion}.tar`)
     })
-    await moveNodeJS('node-v15.6.0-linux-x64', `${dir}/app/node-v15.6.0-linux-x64`)
+    await moveNodeJS(nodeVersion, `${dir}/app/${nodeVersion}`)
     copyFileSync(path.join(__dirname, "../", 'server.js'), `${dir}/app/server.js`);
     copyFileSync(path.join(__dirname, "../", 'Procfile'), `${dir}/app/Procfile`);
 
