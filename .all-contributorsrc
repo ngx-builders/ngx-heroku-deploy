@@ -1,0 +1,57 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+  {
+    "login": "santoshyadavdev",
+    "id": 11923975,
+    "node_id": "MDQ6VXNlcjExOTIzOTc1",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11923975?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/santoshyadavdev",
+    "html_url": "https://github.com/santoshyadavdev",
+    "followers_url": "https://api.github.com/users/santoshyadavdev/followers",
+    "following_url": "https://api.github.com/users/santoshyadavdev/following{/other_user}",
+    "gists_url": "https://api.github.com/users/santoshyadavdev/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/santoshyadavdev/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/santoshyadavdev/subscriptions",
+    "organizations_url": "https://api.github.com/users/santoshyadavdev/orgs",
+    "repos_url": "https://api.github.com/users/santoshyadavdev/repos",
+    "events_url": "https://api.github.com/users/santoshyadavdev/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/santoshyadavdev/received_events",
+    "type": "User",
+    "site_admin": false,
+    "contributions": 14
+  },
+  {
+    "login": "patelvimal",
+    "id": 6451223,
+    "node_id": "MDQ6VXNlcjY0NTEyMjM=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6451223?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/patelvimal",
+    "html_url": "https://github.com/patelvimal",
+    "followers_url": "https://api.github.com/users/patelvimal/followers",
+    "following_url": "https://api.github.com/users/patelvimal/following{/other_user}",
+    "gists_url": "https://api.github.com/users/patelvimal/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/patelvimal/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/patelvimal/subscriptions",
+    "organizations_url": "https://api.github.com/users/patelvimal/orgs",
+    "repos_url": "https://api.github.com/users/patelvimal/repos",
+    "events_url": "https://api.github.com/users/patelvimal/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/patelvimal/received_events",
+    "type": "User",
+    "site_admin": false,
+    "contributions": 2
+  }
+],
+  "contributorsPerLine": 7,
+  "projectName": "ngx-heroku-deploy",
+  "projectOwner": "ngx-builders",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
