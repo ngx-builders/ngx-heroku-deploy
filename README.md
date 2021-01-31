@@ -1,6 +1,6 @@
 [![npm downloads](https://img.shields.io/npm/dt/ngx-heroku-deploy?label=npm%20downloads)](https://www.npmjs.com/package/ngx-heroku-deploy)
 [![npm (scoped)](https://img.shields.io/npm/v/ngx-heroku-deploy)](https://www.npmjs.com/package/ngx-heroku-deploy)
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 
 ## **Deploy your Angular app to Heroku directly from the Angular CLI! 🚀**
 
@@ -23,7 +23,7 @@ You will need two things in order to get started
     4. There is a section named as  "Authorizations".
     5. Create a Authorization token from here and provide that token key which installing this
 
-    ![alt text](https://raw.githubusercontent.com/ngx-builders/ngx-heroku-deploy/master/screenshots/auth-token.png)
+![alt text](https://raw.githubusercontent.com/ngx-builders/ngx-heroku-deploy/master/screenshots/auth-token.png)
 
 ## Setting up this Builder
 
