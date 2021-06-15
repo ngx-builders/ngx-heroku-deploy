@@ -35,9 +35,9 @@
   },
   "homepage": "https://github.com/santoshyadav198613/ngx-heroku-deploy/#readme",
   "devDependencies": {
-    "@angular-devkit/architect": "^0.803.0",
-    "@angular-devkit/core": "^8.3.0",
-    "@angular-devkit/schematics": "^8.3.0",
+    "@angular-devkit/architect": "0.1200.4",
+    "@angular-devkit/core": "8.3.29",
+    "@angular-devkit/schematics": "8.3.29",
     "@types/fs-extra": "^9.0.6",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.22",
