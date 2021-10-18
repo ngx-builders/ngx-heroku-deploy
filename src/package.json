@@ -38,7 +38,7 @@
     "@angular-devkit/architect": "^0.803.0",
     "@angular-devkit/core": "^8.3.0",
     "@angular-devkit/schematics": "^8.3.0",
-    "@types/fs-extra": "^9.0.6",
+    "@types/fs-extra": "9.0.13",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.22",
     "@types/tar": "^4.0.4",
